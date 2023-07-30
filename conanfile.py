@@ -1,0 +1,124 @@
+from conan import ConanFile
+from conan.errors import ConanInvalidConfiguration
+from conan.tools.build import check_min_cppstd
+from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout, CMakeDeps
+from conan.tools.files import rmdir
+from conan.tools.microsoft import is_msvc
+from conan.tools.scm import Version
+import os
+
+
+class MediapieliteRecipe(ConanFile):
+    name = "mediapipelite"
+    version = "0.1.0"
+
+    # Optional metadata
+    license = "Apache-2.0"
+    author = "lzx1413@live.cn"
+    url = ""
+    description = "cmake version of mediapipe graph"
+    topics = ("compute graph", "cpp", "pipeline")
+    # Binary configuration
+    settings = "os", "compiler", "build_type", "arch"
+    options = {"shared": [True, False], "fPIC": [True, False], "enable_profiler": [True, False], 'enable_rtti': [True, False]}
+    default_options = {"shared": True, "fPIC": True, "enable_profiler": False, "enable_rtti": True}
+    exports_sources = "CMakeLists.txt", "mediapipe/*", "cmake/*"
+
+    @property
+    def _compilers_minimum_version(self):
+        return {
+                "gcc": "6",
+                "clang": "5",
+                "apple-clang": "10",
+                "Visual Studio": "15",
+                "msvc": "191",
+            }
+
+    def config_options(self):
+        if self.settings.os == "Windows":
+            del self.options.fPIC
+
+    def configure(self):
+        self.options["glog"].shared = True
+        self.options["glog"].with_unwind=False
+        if self.options.shared:
+            self.options.rm_safe("fPIC")
+    @property
+    def _min_cppstd(self):
+        return "14"
+
+    def validate(self):
+        if self.settings.compiler.cppstd:
+            check_min_cppstd(self, self._min_cppstd)
+        minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
+        if minimum_version and Version(self.settings.compiler.version) < minimum_version:
+            raise ConanInvalidConfiguration(
+                f"{self.ref} requires C++{self._min_cppstd}, which your compiler does not support."
+            )
+
+        if self.options.shared and is_msvc(self):
+            # upstream tries its best to export symbols, but it's broken for the moment
+            raise ConanInvalidConfiguration(f"{self.ref} shared not availabe for Visual Studio (yet)")
+
+
+    def layout(self):
+        cmake_layout(self)
+
+    def requirements(self):
+        self.requires("abseil/20230125.1", visible=True)
+        self.requires("protobuf/3.17.1", visible=True)
+        self.requires("glog/0.5.0", visible=True)
+        self.build_requires("gtest/1.13.0")
+        self.build_requires("zlib/1.2.13")
+        self.build_requires("opencv/3.4.12")
+        self.build_requires("tensorflow-lite/2.10.0")
+        self.build_requires("cpuinfo/cci.20220228")
+        self.build_requires("pybind11/2.10.1")
+        self.build_requires("stb/cci.20220909")
+        self.build_requires("xz_utils/5.4.2")
+        self.build_requires("benchmark/1.7.1")
+        self.build_requires("libjpeg/9e")
+        self.build_requires("eigen/3.4.0")
+
+    def generate(self):
+        tc = CMakeToolchain(self)
+        tc.variables["BUILD_TESTS"] = False
+        tc.variables["BUILD_PYTHON"] = False
+        tc.variables["BUILD_EXAMPLES"] = False
+        tc.variables['BUILD_GRAPH_ONLY'] = True
+        if self.options.enable_rtti:
+            tc.variables['ENABLE_RTTI'] = True
+        else:
+            tc.variables['ENABLE_RTTI'] = False
+        if self.options.enable_profiler:
+            tc.variables['ENABLE_PROFILER'] = True
+        else:
+            tc.variables['ENABLE_PROFILER'] = False
+        tc.generate()
+        deps = CMakeDeps(self)
+        deps.generate()
+
+    def build(self):
+        cmake = CMake(self)
+        cmake.configure()
+        cmake.build()
+
+    def package(self):
+        cmake = CMake(self)
+        cmake.install()
+        rmdir(self, os.path.join(self.package_folder, "lib", "pkgconfig"))
+        rmdir(self, os.path.join(self.package_folder, "share"))
+
+    def package_info(self):
+        self.cpp_info.set_property("cmake_file_name", "mediapipelite")
+        self.cpp_info.components["graph"].set_property("cmake_target_name", "mediapipelite::graph")
+        self.cpp_info.components["graph"].set_property("cmake_target_aliases", ["mediapipelite::graph"])
+        self.cpp_info.components["graph"].set_property("pkg_config_name", "libmediapipelite_graph")
+        self.cpp_info.components["graph"].libs = ["graph"]
+        self.cpp_info.components["stream_handler"].set_property("cmake_target_name", "mediapipelite::stream_handler")
+        self.cpp_info.components["stream_handler"].set_property("cmake_target_aliases", ["mediapipelite::stream_handler"])
+        self.cpp_info.components["stream_handler"].set_property("pkg_config_name", "libmediapipelite_stream_handler")
+        self.cpp_info.components["stream_handler"].libs = ["stream_handler"]
+        self.cpp_info.names["cmake_find_package"] = "mediapipelite"
+        self.cpp_info.names["cmake_find_package_multi"] = "mediapipelite"
+

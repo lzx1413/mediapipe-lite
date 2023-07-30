@@ -1,0 +1,36 @@
+target_sources(framework
+PRIVATE
+${CMAKE_CURRENT_SOURCE_DIR}/affine_transform.cc
+${CMAKE_CURRENT_SOURCE_DIR}/affine_transform_data.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/body_rig.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/classification.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/deleting_file.cc
+${CMAKE_CURRENT_SOURCE_DIR}/detection.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image_file_properties.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image_format.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image_frame.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image_frame_opencv.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image_frame_pool.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image_multi_pool.cc
+${CMAKE_CURRENT_SOURCE_DIR}/image_opencv.cc
+${CMAKE_CURRENT_SOURCE_DIR}/landmark.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/location.cc
+${CMAKE_CURRENT_SOURCE_DIR}/location_data.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/location_opencv.cc
+${CMAKE_CURRENT_SOURCE_DIR}/matrix.cc
+${CMAKE_CURRENT_SOURCE_DIR}/matrix_data.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/rect.pb.cc
+${CMAKE_CURRENT_SOURCE_DIR}/tensor.cc
+${CMAKE_CURRENT_SOURCE_DIR}/tensor_ahwb.cc
+)
+FILE(GLOB HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+install(
+  FILES 
+  ${HEADERS}
+  DESTINATION
+  ${MEDIAPIPE_INCLUDE_INSTALL_DIR}/framework/formats
+)
+add_subdirectory(annotation)
+add_subdirectory(motion)
+add_subdirectory(object_detection)

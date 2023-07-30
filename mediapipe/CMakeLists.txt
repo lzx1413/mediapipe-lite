@@ -1,0 +1,8 @@
+add_subdirectory(framework)
+if(NOT BUILD_GRAPH_ONLY)
+add_subdirectory(gpu)
+add_subdirectory(util)
+endif()
+if(BUILD_PYTHON)
+    add_subdirectory(python)
+endif()
