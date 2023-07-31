@@ -1,7 +1,9 @@
 name: linux-x64-cpu-gcc
 on:
   push:
-    branches: [main]
+    branches:
+     - main
+     - 'feat/**'
     paths:
     - '.github/workflows/linux-x64-cpu-gcc.yml'
     - 'CMakeLists.txt'
@@ -9,7 +11,9 @@ on:
     - 'meidapipe/framework/**'
     - 'examples/**'
   pull_request:
-    branches: [main]
+    branches:
+     - main
+     - 'feat/**'
     paths:
     - '.github/workflows/linux-x64-cpu-gcc.yml'
     - 'CMakeLists.txt'
