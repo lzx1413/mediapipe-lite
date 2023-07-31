@@ -15,7 +15,7 @@
 3. 编译测试
     ```bash
     # conan安装依赖, 仅在第一次编译时运行
-    conan install . --build=missing -pr:b=docker/x86_gcc_profile
+    conan install . --build=missing -pr:h=docker/x86_gcc_profile
     cd build
     cmake ..
     make -j 4

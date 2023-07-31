@@ -1,4 +1,6 @@
 # Mediapipe-lite
+[![linux-x64-cpu-gcc](https://github.com/lzx1413/mediapipe-lite/actions/workflows/linux-x86-cpu-gcc.yml/badge.svg)](https://github.com/lzx1413/mediapipe-lite/actions/workflows/linux-x86-cpu-gcc.yml)
+
 Builds the mediapipe graph module using cmake, conan, and allows conan packaging for various graphing tasks.
 
 ## Quick Start
@@ -15,7 +17,7 @@ Builds the mediapipe graph module using cmake, conan, and allows conan packaging
 3. Compile the test
     ```bash
     # conan install dependencies, run only on first build
-    conan install . --build=missing -pr:b=docker/x86_gcc_profile
+    conan install . --build=missing -pr:h=docker/x86_gcc_profile
     cd build
     cmake ..
     make -j 4
@@ -36,7 +38,7 @@ Builds the mediapipe graph module using cmake, conan, and allows conan packaging
     * libframework contains libgraph and other auxiliary projects.  
 5. conan package
     ```bash 
-    conan create . --build=missing -s build_type=Release
+    conan create . --build=missing -s build_type=Release  -pr:h=docker/x86_gcc_profile
     ```
 6. Examples of using Graph
     

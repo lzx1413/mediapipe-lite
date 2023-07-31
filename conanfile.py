@@ -21,7 +21,7 @@ class MediapieliteRecipe(ConanFile):
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False], "enable_profiler": [True, False], 'enable_rtti': [True, False]}
-    default_options = {"shared": True, "fPIC": True, "enable_profiler": False, "enable_rtti": True}
+    default_options = {"shared": False, "fPIC": True, "enable_profiler": False, "enable_rtti": True}
     exports_sources = "CMakeLists.txt", "mediapipe/*", "cmake/*"
 
     @property
@@ -68,17 +68,17 @@ class MediapieliteRecipe(ConanFile):
         self.requires("abseil/20230125.1", visible=True)
         self.requires("protobuf/3.17.1", visible=True)
         self.requires("glog/0.5.0", visible=True)
-        self.build_requires("gtest/1.13.0")
-        self.build_requires("zlib/1.2.13")
-        self.build_requires("opencv/3.4.12")
-        self.build_requires("tensorflow-lite/2.10.0")
-        self.build_requires("cpuinfo/cci.20220228")
-        self.build_requires("pybind11/2.10.1")
-        self.build_requires("stb/cci.20220909")
-        self.build_requires("xz_utils/5.4.2")
-        self.build_requires("benchmark/1.7.1")
-        self.build_requires("libjpeg/9e")
-        self.build_requires("eigen/3.4.0")
+        self.test_requires("gtest/1.13.0")
+        self.test_requires("zlib/1.2.13")
+        self.test_requires("opencv/3.4.12")
+        self.test_requires("tensorflow-lite/2.10.0")
+        self.test_requires("cpuinfo/cci.20220228")
+        self.test_requires("pybind11/2.10.1")
+        self.test_requires("stb/cci.20220909")
+        self.test_requires("xz_utils/5.4.2")
+        self.test_requires("benchmark/1.7.1")
+        self.test_requires("libjpeg/9e")
+        self.test_requires("eigen/3.4.0")
 
     def generate(self):
         tc = CMakeToolchain(self)
