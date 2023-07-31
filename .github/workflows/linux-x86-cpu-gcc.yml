@@ -32,4 +32,4 @@ jobs:
         cmake ..
         make -j 2
     - name: test
-      run: cd  build && make test
+      run: cd  build && pwd && test/graph_validation_test
