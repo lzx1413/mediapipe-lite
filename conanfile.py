@@ -39,7 +39,6 @@ class MediapieliteRecipe(ConanFile):
             del self.options.fPIC
 
     def configure(self):
-        self.options["glog"].shared = True
         self.options["glog"].with_unwind=False
         if self.options.shared:
             self.options.rm_safe("fPIC")
@@ -63,6 +62,7 @@ class MediapieliteRecipe(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+        self.folders.generators = 'build'
 
     def requirements(self):
         self.requires("abseil/20230125.1", visible=True)

@@ -14,9 +14,9 @@ Builds the mediapipe graph module using cmake, conan, and allows conan packaging
     ```
 3. Compile the test
     ```bash
-    cd build
     # conan install dependencies, run only on first build
-    conan install .. --output-folder=./ --build=missing
+    conan install . --build=missing
+    cd build
     cmake ..
     make -j 4
     # Declare the path to the dynamic library, unset to run source deactivate_conanrun.sh
