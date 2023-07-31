@@ -15,7 +15,7 @@ Builds the mediapipe graph module using cmake, conan, and allows conan packaging
 3. Compile the test
     ```bash
     # conan install dependencies, run only on first build
-    conan install . --build=missing
+    conan install . --build=missing -pr:b=docker/x86_gcc_profile
     cd build
     cmake ..
     make -j 4

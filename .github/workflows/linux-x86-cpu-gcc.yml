@@ -1,0 +1,46 @@
+name: linux-x64-cpu-gcc
+on:
+  push:
+    branches: [main]
+    paths:
+    - '.github/workflows/linux-x64-cpu-gcc.yml'
+    - 'CMakeLists.txt'
+    - 'cmake/**'
+    - 'meidapipe/framework/**'
+    - 'examples/**'
+  pull_request:
+    branches: [main]
+    paths:
+    - '.github/workflows/linux-x64-cpu-gcc.yml'
+    - 'CMakeLists.txt'
+    - 'cmake/**'
+    - 'meidapipe/framework/**'
+    - 'examples/**'
+concurrency:
+  group: linux-x64-cpu-gcc-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+
+jobs:
+  linux-gcc:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: update
+      run: sudo apt update
+    - name: install_dep
+      run: sudo apt install libgtk2.0-dev
+    - name: install_conan
+      run: | 
+        pip3 install conan
+        conan profile detect --force
+    - name: build
+      run: |
+        mkdir build
+        conan install . --build=missing
+        cd build
+        cmake ..
+        make -j 2
+    - name: test
+      run: cd  build && make test

@@ -39,9 +39,4 @@ RUN pip3 install six==1.14.0
 # setup conan
 RUN pip3 install conan
 RUN conan profile detect --force
-RUN conan profile update settings.compiler.libcxx=libstdc++11 default
-RUN conan profile update conf.tools.system.package_manager:mode=install default
-#RUN pip3 install tensorflow
-#RUN pip3 install tf_slim
-#RUN ln -s /usr/bin/python3 /usr/bin/python
 ENTRYPOINT ["/bin/bash"]

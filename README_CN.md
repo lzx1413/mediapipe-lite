@@ -14,9 +14,9 @@
     ```
 3. 编译测试
     ```bash
-    cd build
     # conan安装依赖, 仅在第一次编译时运行
-    conan install .. --output-folder=./ --build=missing
+    conan install . --build=missing -pr:b=docker/x86_gcc_profile
+    cd build
     cmake ..
     make -j 4
     # 声明动态库路径, 取消设置可运行 source deactivate_conanrun.sh
