@@ -155,6 +155,9 @@ if(BUILD_TESTS)
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_graph_event_loop_test.cc)
     set(src_list ${PROJECT_SOURCE_DIR}/mediapipe/calculators/core/pass_through_calculator.cc
+    ${PROJECT_SOURCE_DIR}/mediapipe/calculators/internal/callback_packet_calculator.pb.cc
+    ${PROJECT_SOURCE_DIR}/mediapipe/calculators/internal/callback_packet_calculator.cc
+    ${PROJECT_SOURCE_DIR}/mediapipe/framework/tool/sink.cc
     )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_graph_side_packet_test.cc
@@ -163,6 +166,8 @@ if(BUILD_TESTS)
     ${PROJECT_SOURCE_DIR}/mediapipe/calculators/core/counting_source_calculator.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/test_calculators.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/test_calculators.pb.cc
+    ${PROJECT_SOURCE_DIR}/mediapipe/framework/tool/packet_generator_wrapper_calculator.cc
+    ${PROJECT_SOURCE_DIR}/mediapipe/framework/tool/packet_generator_wrapper_calculator.pb.cc
     )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_graph_stopping_test.cc
@@ -186,7 +191,11 @@ if(BUILD_TESTS)
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_parallel_execution_test.cc
     )
-    set(src_list)
+    set(src_list
+    ${PROJECT_SOURCE_DIR}/mediapipe/calculators/internal/callback_packet_calculator.pb.cc
+    ${PROJECT_SOURCE_DIR}/mediapipe/calculators/internal/callback_packet_calculator.cc
+    ${PROJECT_SOURCE_DIR}/mediapipe/framework/tool/sink.cc
+    )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_runner_test.cc)
     set(src_list)
