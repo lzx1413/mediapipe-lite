@@ -1233,10 +1233,12 @@ bool CalculatorGraph::UnthrottleSources() {
     }
     int new_size = stream->QueueSize() + 1;
     stream->SetMaxQueueSize(new_size);
+    #if !defined(_MSC_VER)
     LOG_EVERY_N(WARNING, 100)
         << "Resolved a deadlock by increasing max_queue_size of input stream: "
         << stream->Name() << " to: " << new_size
         << ". Consider increasing max_queue_size for better performance.";
+    #endif
   }
   return !full_streams.empty();
 }

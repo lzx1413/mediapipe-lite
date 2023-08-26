@@ -316,6 +316,7 @@ Packet MakePacket(Args&&... args) {  // NOLINT(build/c++11)
 // instead of a pointer to the array itself - they have the same value, but
 // different types), which would prevent Adopt from seeing the array's type
 // if we did not have the cast.
+#if !defined(_MSC_VER)
 template <typename T,
           typename std::enable_if<std::is_array<T>::value>::type* = nullptr,
           typename... Args>
@@ -323,6 +324,7 @@ Packet MakePacket(Args&&... args) {  // NOLINT(build/c++11)
   return Adopt(reinterpret_cast<T*>(
       new T{std::forward<typename std::remove_extent<T>::type>(args)...}));
 }
+#endif
 
 // Returns a mutable pointer to the data in a unique_ptr in a packet. This
 // is useful in combination with AdoptAsUniquePtr.  The caller must
@@ -633,7 +635,7 @@ inline absl::StatusOr<std::unique_ptr<T>> Packet::Consume() {
   MP_RETURN_IF_ERROR(ValidateAsType<T>());
   // Clients who use this function are responsible for ensuring that no
   // other thread is doing anything with this Packet.
-  if (!holder_->HasForeignOwner() && holder_.unique()) {
+  if (!holder_->HasForeignOwner() && holder_.use_count() == 1) {
     VLOG(2) << "Consuming the data of " << DebugString();
     absl::StatusOr<std::unique_ptr<T>> release_result =
         holder_->As<T>()->Release();
@@ -655,7 +657,7 @@ inline absl::StatusOr<std::unique_ptr<T>> Packet::ConsumeOrCopy(
     typename std::enable_if<!std::is_array<T>::value>::type*) {
   MP_RETURN_IF_ERROR(ValidateAsType<T>());
   // If holder is the sole owner of the underlying data, consumes this packet.
-  if (!holder_->HasForeignOwner() && holder_.unique()) {
+  if (!holder_->HasForeignOwner() && holder_.use_count() == 1) {
     VLOG(2) << "Consuming the data of " << DebugString();
     absl::StatusOr<std::unique_ptr<T>> release_result =
         holder_->As<T>()->Release();
@@ -685,7 +687,7 @@ inline absl::StatusOr<std::unique_ptr<T>> Packet::ConsumeOrCopy(
                             std::extent<T>::value != 0>::type*) {
   MP_RETURN_IF_ERROR(ValidateAsType<T>());
   // If holder is the sole owner of the underlying data, consumes this packet.
-  if (!holder_->HasForeignOwner() && holder_.unique()) {
+  if (!holder_->HasForeignOwner() && holder_.use_count() == 1) {
     VLOG(2) << "Consuming the data of " << DebugString();
     absl::StatusOr<std::unique_ptr<T>> release_result =
         holder_->As<T>()->Release();

@@ -13,9 +13,8 @@
 // limitations under the License.
 
 #include "mediapipe/framework/calculator_node.h"
-
-#include <unistd.h>
-
+#include <chrono>
+#include <thread>
 #include <memory>
 
 #include "absl/memory/memory.h"
@@ -49,7 +48,7 @@ class CountCalculator : public CalculatorBase {
     ++num_open_;
     // Simulate doing nontrivial work to ensure that the time spent in the
     // method will register on streamz each time it is called.
-    usleep(100);
+    std::this_thread::sleep_for(std::chrono::microseconds(100));
     return absl::OkStatus();
   }
 
@@ -64,7 +63,7 @@ class CountCalculator : public CalculatorBase {
                        .At(cc->InputTimestamp()));
     // Simulate doing nontrivial work to ensure that the time spent in the
     // method will register on streamz each time it is called.
-    usleep(100);
+    std::this_thread::sleep_for(std::chrono::microseconds(100));
     return absl::OkStatus();
   }
 
@@ -72,7 +71,7 @@ class CountCalculator : public CalculatorBase {
     ++num_close_;
     // Simulate doing nontrivial work to ensure that the time spent in the
     // method will register on streamz each time it is called.
-    usleep(100);
+    std::this_thread::sleep_for(std::chrono::microseconds(100));
     return absl::OkStatus();
   }
 

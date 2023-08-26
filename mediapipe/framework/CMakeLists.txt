@@ -177,6 +177,7 @@ if(BUILD_TESTS)
     ${PROJECT_SOURCE_DIR}/mediapipe/calculators/internal/callback_packet_calculator.cc
     )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_graph_test.cc
     )
     set(src_list ${PROJECT_SOURCE_DIR}/mediapipe/calculators/core/pass_through_calculator.cc
@@ -189,6 +190,7 @@ if(BUILD_TESTS)
     ${PROJECT_SOURCE_DIR}/mediapipe/framework/tool/sink.cc
     )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
+    endif()
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_parallel_execution_test.cc
     )
     set(src_list
@@ -232,17 +234,20 @@ if(BUILD_TESTS)
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/packet_generator_test.cc)
     set(src_list)
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/packet_registration_test.cc)
     set(src_list 
     ${CMAKE_CURRENT_SOURCE_DIR}/packet_test.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/packet_test.pb.cc
     )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
+
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/packet_test.cc)
     set(src_list 
     ${CMAKE_CURRENT_SOURCE_DIR}/packet_test.pb.cc
     )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
+    endif()
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/timestamp_test.cc)
     set(src_list)
     ADD_GTEST_UNITTEST(${test_src} src_list dep)

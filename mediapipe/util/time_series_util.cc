@@ -48,6 +48,7 @@ bool LogWarningIfTimestampIsInconsistent(const Timestamp& current_timestamp,
       initial_timestamp.Seconds() + cumulative_samples / sample_rate;
   if (fabs(current_timestamp.Seconds() - expected_timestamp_seconds) >
       0.5 / sample_rate) {
+    #if !defined(_MSC_VER)
     LOG_EVERY_N(WARNING, 20)
         << std::fixed << "Timestamp " << current_timestamp.Seconds()
         << " not consistent with number of samples " << cumulative_samples
@@ -56,6 +57,7 @@ bool LogWarningIfTimestampIsInconsistent(const Timestamp& current_timestamp,
         << " Timestamp difference: "
         << current_timestamp.Seconds() - expected_timestamp_seconds
         << " sample_rate: " << sample_rate;
+    #endif
     return false;
   } else {
     return true;

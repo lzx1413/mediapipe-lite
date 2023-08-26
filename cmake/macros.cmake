@@ -24,6 +24,7 @@ function(ADD_GTEST_UNITTEST TEST_SRC SRC_LIST LIB)
                           GTest::gtest
                           GTest::gmock
                           GTest::gtest_main)
+    set_target_properties(${TEST_EXECUTABLE_NAME} PROPERTIES LINK_FLAGS "/WHOLEARCHIVE:stream_handler")
     set_target_properties(${TEST_EXECUTABLE_NAME} PROPERTIES
                           RUNTIME_OUTPUT_DIRECTORY_DEBUG ${PROJECT_BINARY_DIR}/test
                           RUNTIME_OUTPUT_DIRECTORY_RELEASE ${PROJECT_BINARY_DIR}/test

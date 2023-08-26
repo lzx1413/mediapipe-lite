@@ -15,12 +15,13 @@
 #include "mediapipe/framework/legacy_calculator_support.h"
 
 namespace mediapipe {
-
+#if CPP_STANDARD < 201703L
 template <>
 thread_local CalculatorContext*
     LegacyCalculatorSupport::Scoped<CalculatorContext>::current_ = nullptr;
 template <>
 thread_local CalculatorContract*
     LegacyCalculatorSupport::Scoped<CalculatorContract>::current_ = nullptr;
+#endif
 
 }  // namespace mediapipe

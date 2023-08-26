@@ -62,7 +62,15 @@ class LegacyCalculatorSupport {
 #ifndef __APPLE__
     ABSL_CONST_INIT
 #endif                                // !__APPLE__
-    static thread_local C* current_;  // NOLINT
+#if defined(_MSC_VER)
+	#define CPP_STANDARD _MSVC_LANG
+#endif
+    #if CPP_STANDARD >= 201703L
+    static inline thread_local C* current_ = nullptr;  // NOLINT
+    #else
+    static  thread_local C* current_ ;  // NOLINT
+    #endif
+
   };
 };
 

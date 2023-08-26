@@ -75,7 +75,11 @@ absl::Status BuildAndRunGraph() {
 
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
+  #ifdef _WINDOWS
+  FLAGS_stderrthreshold = google::GLOG_INFO;
+  #else
   FLAGS_stderrthreshold = google::INFO;
+  #endif
   FLAGS_colorlogtostderr = true;
   mediapipe::BuildAndRunGraph().ok();
   return 0;

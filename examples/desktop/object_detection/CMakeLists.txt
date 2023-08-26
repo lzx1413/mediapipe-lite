@@ -46,5 +46,7 @@ target_link_libraries(object_detection PUBLIC
 target_link_libraries(object_detection PUBLIC 
                           -Wl,--no-whole-archive 
 framework tensorflow::tensorflowlite)
+set_target_properties(object_detection PROPERTIES LINK_FLAGS "/WHOLEARCHIVE:stream_handler")
+
 add_executable(test_opencv ${CMAKE_CURRENT_SOURCE_DIR}/test_opencv.cc)
 target_link_libraries(test_opencv PUBLIC opencv::opencv_videoio_alias opencv::opencv_core_alias)

@@ -105,7 +105,11 @@ absl::Status RunMPPGraph() {
 
 int main(int argc, char** argv) {
   google::InitGoogleLogging(argv[0]);
-  FLAGS_stderrthreshold = google::INFO;  
+  #ifdef _WINDOWS
+  FLAGS_stderrthreshold = google::GLOG_INFO;
+  #else
+  FLAGS_stderrthreshold = google::INFO;
+  #endif
   absl::ParseCommandLine(argc, argv);
   absl::Status run_status = RunMPPGraph();
   if (!run_status.ok()) {

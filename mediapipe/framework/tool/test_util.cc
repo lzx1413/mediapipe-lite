@@ -15,7 +15,13 @@
 #include "mediapipe/framework/tool/test_util.h"
 
 #include <fcntl.h>
+#if !defined(_MSC_VER)
 #include <unistd.h>
+#else 
+#include <wtypes.h>
+#define ulong ULONG 
+#define uint UINT
+#endif
 
 #include <memory>
 #include <string>
@@ -323,6 +329,7 @@ absl::StatusOr<std::string> SavePngTestOutput(
   return output_relative_path;
 }
 
+#if !defined(_MSC_VER)
 bool LoadTestGraph(CalculatorGraphConfig* proto, const std::string& path) {
   int fd = open(path.c_str(), O_RDONLY);
   if (fd == -1) {
@@ -338,7 +345,7 @@ bool LoadTestGraph(CalculatorGraphConfig* proto, const std::string& path) {
   }
   return success;
 }
-
+#endif
 std::unique_ptr<ImageFrame> GenerateLuminanceImage(
     const ImageFrame& original_image) {
   const int width = original_image.Width();

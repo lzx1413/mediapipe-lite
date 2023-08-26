@@ -14,7 +14,9 @@
 
 #include "mediapipe/framework/calculator_graph.h"
 
+#if !defined(_MSC_VER)
 #include <pthread.h>
+#endif
 
 #include <atomic>
 #include <ctime>
