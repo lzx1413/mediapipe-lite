@@ -140,6 +140,7 @@ I20230721 17:08:09.525879 140015 hello_world.cc:57] Hello World!
 I20230721 17:08:09.525885 140015 hello_world.cc:57] Hello World!
 I20230721 17:08:09.525892 140015 hello_world.cc:57] Hello World!
 ```
+Windows 系统通过MSVC编译本工程请参考 [BuildWithMSVC](./doc/build_with_msvc.md)
 ## TODO List
 * [ ] 逐步清理冗余代码
 * [ ] 利用docker/conan支持多平台编译

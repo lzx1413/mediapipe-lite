@@ -143,6 +143,7 @@ I20230721 17:08:09.525879 140015 hello_world.cc:57] Hello World!
 I20230721 17:08:09.525885 140015 hello_world.cc:57] Hello World!
 I20230721 17:08:09.525892 140015 hello_world.cc:57] Hello World!
 ```
+Building with MSVC on windows, please refer to [BuildWithMSVC](./doc/build_with_msvc.md)
 ## TODO List
 * [ ] Clean up redundant code step by step
 * [ ] Use docker/conan to support multi-platform compilation.
