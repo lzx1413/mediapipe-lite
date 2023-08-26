@@ -43,3 +43,4 @@ data
 *.tflite
 *.json
 *.pyc
+.cache
