@@ -153,6 +153,7 @@ if(BUILD_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/test_calculators.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/test_calculators.pb.cc) 
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_graph_event_loop_test.cc)
     set(src_list ${PROJECT_SOURCE_DIR}/mediapipe/calculators/core/pass_through_calculator.cc
     ${PROJECT_SOURCE_DIR}/mediapipe/calculators/internal/callback_packet_calculator.pb.cc
@@ -160,6 +161,7 @@ if(BUILD_TESTS)
     ${PROJECT_SOURCE_DIR}/mediapipe/framework/tool/sink.cc
     )
     ADD_GTEST_UNITTEST(${test_src} src_list dep)
+    endif()
     set(test_src ${CMAKE_CURRENT_SOURCE_DIR}/calculator_graph_side_packet_test.cc
     )
     set(src_list ${PROJECT_SOURCE_DIR}/mediapipe/calculators/core/pass_through_calculator.cc

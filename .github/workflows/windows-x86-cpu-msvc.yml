@@ -1,0 +1,45 @@
+name: windows-x86-cpu-msvc
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+    - '.github/workflows/windows-x86-cpu-msvc.yml'
+    - 'CMakeLists.txt'
+    - 'cmake/**'
+    - 'mediapipe/**'
+    - 'examples/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+    - '.github/workflows/windows-x86-cpu-msvc.yml'
+    - 'CMakeLists.txt'
+    - 'cmake/**'
+    - 'mediapipe/**'
+    - 'examples/**'
+concurrency:
+  group: windows-x86-cpu-msvc-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: vs2022
+    runs-on: windows-2022
+    steps:
+    - uses: actions/checkout@v3
+    - name: install_conan
+      run: | 
+        pip3 install conan
+        conan profile detect --force
+    - name: build
+      run: |
+        rm  'C:/Program Files/CMake/share/cmake-3.27/Modules/FindProtobuf.cmake'
+        mkdir build
+        conan install . --build=missing  -pr:h=docker/x86_msvc_profile
+        cd build
+        cmake ..
+        cmake --build . --config Release
+    - name: test
+      run: cd  build && ctest
