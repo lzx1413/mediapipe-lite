@@ -40,12 +40,17 @@ ${PROJECT_SOURCE_DIR}/mediapipe/gpu/scale_mode.pb.cc
 ${PROJECT_SOURCE_DIR}/mediapipe/util/header_util.cc
 )
 find_package(tensorflowlite REQUIRED)
+if (APPLE)
+target_link_libraries(object_detection PUBLIC framework tensorflow::tensorflowlite)
+target_link_libraries(object_detection PUBLIC 
+                          -Wl,-force_load
+                          stream_handler)
+else()
 target_link_libraries(object_detection PUBLIC 
                           -Wl,--whole-archive 
                           stream_handler)
-target_link_libraries(object_detection PUBLIC 
-                          -Wl,--no-whole-archive 
-framework tensorflow::tensorflowlite)
+target_link_libraries(object_detection PUBLIC    -Wl,--no-whole-archive framework tensorflow::tensorflowlite)
+endif()
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 set_target_properties(object_detection PROPERTIES LINK_FLAGS "/WHOLEARCHIVE:stream_handler")
 endif()

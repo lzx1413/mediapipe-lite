@@ -1,10 +1,10 @@
-name: linux-x86-cpu-gcc
+name: macos-x86-cpu-clang
 on:
   workflow_dispatch:
   push:
     branches: [ main ]
     paths:
-    - '.github/workflows/linux-x86-cpu-gcc.yml'
+    - '.github/workflows/macos-x86-cpu-clang.yml'
     - 'CMakeLists.txt'
     - 'cmake/**'
     - 'mediapipe/**'
@@ -12,34 +12,38 @@ on:
   pull_request:
     branches: [ main ]
     paths:
-    - '.github/workflows/linux-x86-cpu-gcc.yml'
+    - '.github/workflows/macos-x86-cpu-clang.yml'
     - 'CMakeLists.txt'
     - 'cmake/**'
     - 'mediapipe/**'
     - 'examples/**'
 concurrency:
-  group: linux-x86-cpu-gcc-${{ github.ref }}
+  group: macos-x86-cpu-clang-${{ github.ref }}
   cancel-in-progress: true
+env:
+  DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
+  MAC_DEPLOYMENT_TARGET: '10.9'
+  MAC_ARM64_DEPLOYMENT_TARGET: '11.0'
+  ENABLE_BITCODE: OFF
+  ENABLE_ARC: OFF
+  ENABLE_VISIBILITY: OFF
 permissions:
   contents: read
 
 jobs:
-  linux-gcc:
-    runs-on: ubuntu-20.04
+  macos-clang:
+    runs-on: macos-12
     steps:
     - uses: actions/checkout@v3
-    - name: update
-      run: sudo apt update
-    - name: install_dep
-      run: sudo apt install libgtk2.0-dev
     - name: install_conan
       run: | 
         pip3 install conan
         conan profile detect --force
     - name: build
       run: |
+        rm /usr/local/Cellar/cmake/3.27.3/share/cmake/Modules/Findprotobuf.cmake
         mkdir build
-        conan install . --build=missing -pr:h=docker/x86_gcc_profile
+        conan install . --build=missing 
         cd build
         cmake ..
         make -j 2

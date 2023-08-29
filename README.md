@@ -1,5 +1,6 @@
 # Mediapipe-lite
 [![linux-x64-cpu-gcc](https://github.com/lzx1413/mediapipe-lite/actions/workflows/linux-x86-cpu-gcc.yml/badge.svg)](https://github.com/lzx1413/mediapipe-lite/actions/workflows/linux-x86-cpu-gcc.yml)
+[![macos-x64-cpu-clang](https://github.com/lzx1413/mediapipe-lite/actions/workflows/macos-x86-cpu-clang.yml/badge.svg)](https://github.com/lzx1413/mediapipe-lite/actions/workflows/macos-x86-cpu-clang.yml)
 
 Builds the mediapipe graph module using cmake, conan, and allows conan packaging for various graphing tasks.
 

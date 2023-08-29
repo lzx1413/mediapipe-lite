@@ -25,12 +25,6 @@
 #include "mediapipe/framework/port/logging.h"
 #include "mediapipe/framework/port/status.h"
 
-#ifdef __APPLE__
-#define AUTORELEASEPOOL @autoreleasepool
-#else
-#define AUTORELEASEPOOL
-#endif  // __APPLE__
-
 namespace mediapipe {
 namespace internal {
 
@@ -204,18 +198,11 @@ void SchedulerQueue::RunNextTask() {
         << "Scheduled a node that was closed. This should not happen.";
   }
 
-  // On iOS, calculators may rely on the existence of an autorelease pool
-  // (either directly, or because system code they call does). We do not
-  // want to rely on executors setting up an autorelease pool for us (e.g.
-  // an executor creating standard pthread will not, by default), so we
-  // do it here to ensure all executors are covered.
-  AUTORELEASEPOOL {
-    if (is_open_node) {
-      DCHECK(!calculator_context);
-      OpenCalculatorNode(node);
-    } else {
-      RunCalculatorNode(node, calculator_context);
-    }
+  if (is_open_node) {
+    DCHECK(!calculator_context);
+    OpenCalculatorNode(node);
+  } else {
+    RunCalculatorNode(node, calculator_context);
   }
 
   bool is_idle;

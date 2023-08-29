@@ -12,6 +12,19 @@ function(ADD_GTEST_UNITTEST TEST_SRC SRC_LIST LIB)
     target_include_directories(${TEST_EXECUTABLE_NAME} SYSTEM
                                PRIVATE
                                ${PROJECT_SOURCE_DIR})
+    if (APPLE)
+    target_link_libraries(${TEST_EXECUTABLE_NAME}
+                          PUBLIC
+                          ${${LIB}}
+                          GTest::gtest
+                          GTest::gmock
+                          GTest::gtest_main)
+    target_link_libraries(${TEST_EXECUTABLE_NAME}
+                          PUBLIC
+                          -Wl, -force_load
+                          stream_handler
+                          )
+    else()
     target_link_libraries(${TEST_EXECUTABLE_NAME}
                           PUBLIC
                           -Wl,--whole-archive
@@ -24,6 +37,7 @@ function(ADD_GTEST_UNITTEST TEST_SRC SRC_LIST LIB)
                           GTest::gtest
                           GTest::gmock
                           GTest::gtest_main)
+    endif()
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
         set_target_properties(${TEST_EXECUTABLE_NAME} PROPERTIES LINK_FLAGS "/WHOLEARCHIVE:stream_handler")
     endif()
