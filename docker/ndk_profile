@@ -7,10 +7,6 @@ compiler=clang
 compiler.libcxx=c++_static
 compiler.cppstd=17
 compiler.version=12
-[tool_requires]
-[options]
-[env]
-CONAN_CMAKE_TOOLCHAIN_FILE=/opt/android-ndk/build/cmake/android.toolchain.cmake
 [conf]
 tools.system.package_manager:mode=install
-tools.android:ndk_path=/opt/android-ndk
+tools.android:ndk_path=$ENV{ANDROID_NDK_HOME}

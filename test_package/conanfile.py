@@ -17,7 +17,7 @@ class mediapipeliteTestConan(ConanFile):
     def requirements(self):
         self.requires(self.tested_reference_str)
         self.requires("abseil/20230125.1", visible=True)
-        self.requires("protobuf/3.17.1", visible=True)
+        self.requires("protobuf/3.21.12", visible=True)
         self.requires("glog/0.5.0", visible=True)
 
     def build(self):

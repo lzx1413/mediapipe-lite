@@ -17,7 +17,7 @@
 #include <cmath>
 
 #ifdef __ANDROID__
-#include "/opt/android-ndk/sources/android/cpufeatures/cpu-features.h"
+#include "cpufeatures/cpu-features.h"
 #elif _WIN32
 #include <windows.h>
 #else

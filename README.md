@@ -5,6 +5,9 @@
 
 Builds the mediapipe graph module using cmake, conan, and allows conan packaging for various graphing tasks.
 
+## Change Log 
+* 2023/08/30 supports building on [Mac](.github/workflows/macos-x86-cpu-clang.yml), [Linux](.github/workflows/linux-x86-cpu-gcc.yml), [Windows](doc/build_with_msvc.md), [Android](doc/build_with_ndk.md) 
+
 ## Quick Start
 1. Build the Docker image 
     ```bash
@@ -145,10 +148,8 @@ I20230721 17:08:09.525879 140015 hello_world.cc:57] Hello World!
 I20230721 17:08:09.525885 140015 hello_world.cc:57] Hello World!
 I20230721 17:08:09.525892 140015 hello_world.cc:57] Hello World!
 ```
-Building with MSVC on windows, please refer to [BuildWithMSVC](./doc/build_with_msvc.md)
 ## TODO List
 * [ ] Clean up redundant code step by step
-* [ ] Use docker/conan to support multi-platform compilation.
 * [ ] Add doc, CI, CD, CT, code formatting checking and other related processes.
 * [ ] Improve tutorials and code examples
 * [ ] Add pipieline test benchmark.

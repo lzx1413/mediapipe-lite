@@ -38,10 +38,9 @@ jobs:
         conan profile detect --force
     - name: build
       run: |
-        mkdir build
         conan install . --build=missing -pr:h=docker/x86_gcc_profile
-        cd build
+        cd build_Linux
         cmake ..
         make -j 2
     - name: test
-      run: cd  build && make test
+      run: cd  build_Linux && make test
