@@ -42,10 +42,9 @@ jobs:
     - name: build
       run: |
         rm /usr/local/Cellar/cmake/3.27.3/share/cmake/Modules/Findprotobuf.cmake
-        mkdir build
         conan install . --build=missing 
-        cd build
+        cd build_Macos
         cmake ..
         make -j 2
     - name: test
-      run: cd  build && make test
+      run: cd  build_Macos && make test

@@ -1,5 +1,4 @@
 add_library(graph 
-
 ${CMAKE_CURRENT_SOURCE_DIR}/timestamp.cc
 ${CMAKE_CURRENT_SOURCE_DIR}/basic_types_registration.cc
 ${CMAKE_CURRENT_SOURCE_DIR}/calculator.pb.cc
@@ -63,8 +62,12 @@ ${CMAKE_CURRENT_SOURCE_DIR}/tool/packet_generator_wrapper_calculator.pb.cc
 ${CMAKE_CURRENT_SOURCE_DIR}/tool/simulation_clock.cc
 ${CMAKE_CURRENT_SOURCE_DIR}/tool/simulation_clock_executor.cc
 ${PROJECT_SOURCE_DIR}/mediapipe/util/cpu_util.cc
-#/opt/android-ndk/sources/android/cpufeatures/cpu-features.c
 )
+if (ANDROID)
+target_sources(graph PRIVATE
+$ENV{ANDROID_NDK_HOME}/sources/android/cpufeatures/cpu-features.c
+)
+endif()
 add_subdirectory(api2)
 add_subdirectory(deps)
 if(ENABLE_PROFILER)

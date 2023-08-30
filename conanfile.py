@@ -39,9 +39,11 @@ class MediapieliteRecipe(ConanFile):
             del self.options.fPIC
 
     def configure(self):
-        self.options["glog"].with_unwind=False
         if self.options.shared:
             self.options.rm_safe("fPIC")
+        self.options["glog/*"].with_unwind=False
+        self.options["opencv/*"].with_gtk=False
+        self.options["opencv/*"].highgui=False
     @property
     def _min_cppstd(self):
         return "14"
@@ -62,15 +64,15 @@ class MediapieliteRecipe(ConanFile):
 
     def layout(self):
         cmake_layout(self)
-        self.folders.generators = 'build'
+        self.folders.generators = f'build_{self.settings.os}' 
 
     def requirements(self):
         self.requires("abseil/20230125.1", visible=True)
-        self.requires("protobuf/3.17.1", visible=True)
+        self.requires("protobuf/3.21.12", visible=True)
         self.requires("glog/0.5.0", visible=True)
         self.test_requires("gtest/1.13.0")
         self.test_requires("zlib/1.2.13")
-        self.test_requires("opencv/3.4.12")
+        self.test_requires("opencv/4.5.5")
         self.test_requires("tensorflow-lite/2.10.0")
         self.test_requires("cpuinfo/cci.20220228")
         self.test_requires("pybind11/2.10.1")
