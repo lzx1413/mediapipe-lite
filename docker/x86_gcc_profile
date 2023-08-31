@@ -6,5 +6,3 @@ compiler.cppstd=17
 compiler.libcxx=libstdc++11
 compiler.version=9
 os=Linux
-[conf]
-tools.system.package_manager:mode=install

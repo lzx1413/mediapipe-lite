@@ -41,9 +41,16 @@ class MediapieliteRecipe(ConanFile):
     def configure(self):
         if self.options.shared:
             self.options.rm_safe("fPIC")
-        self.options["glog/*"].with_unwind=False
-        self.options["opencv/*"].with_gtk=False
-        self.options["opencv/*"].highgui=False
+        self.options['glog'].with_unwind = False
+        self.options["opencv/*"].with_gtk = False
+        self.options["opencv/*"].with_vulkan = False
+        self.options["opencv/*"].with_ffmpeg = False
+        self.options["opencv/*"].gapi = False
+        self.options["opencv/*"].objdetect = False
+        self.options["opencv/*"].photo = False
+        self.options["opencv/*"].dnn = False
+        self.options["opencv/*"].optflow = True
+        self.options["opencv/*"].ximgproc = True
     @property
     def _min_cppstd(self):
         return "14"
@@ -88,6 +95,8 @@ class MediapieliteRecipe(ConanFile):
         tc.variables["BUILD_PYTHON"] = False
         tc.variables["BUILD_EXAMPLES"] = False
         tc.variables['BUILD_GRAPH_ONLY'] = True
+        if self.settings.os == 'Android':
+            tc.variables['BUILD_PROTO_FILES'] = False
         if self.options.enable_rtti:
             tc.variables['ENABLE_RTTI'] = True
         else:

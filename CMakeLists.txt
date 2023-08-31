@@ -123,8 +123,8 @@ if(BUILD_PROTO_FILES)
         set_source_files_properties(${FILE_PATH}${FIL_WE}.pb.h PROPERTIES GENERATED True)
         # message("Copying " ${PROTO_SRCS} " to " ${FILE_PATH})
 
-        #file(COPY ${PROTO_SRCS} DESTINATION ${FILE_PATH})
-        #file(COPY ${PROTO_HDRS} DESTINATION ${FILE_PATH})
+        file(COPY ${PROTO_SRCS} DESTINATION ${FILE_PATH})
+        file(COPY ${PROTO_HDRS} DESTINATION ${FILE_PATH})
 
     ENDFOREACH()
 endif()
