@@ -41,7 +41,7 @@ jobs:
         conan profile detect --force
     - name: build
       run: |
-        rm /usr/local/Cellar/cmake/3.27.3/share/cmake/Modules/Findprotobuf.cmake
+        rm   /usr/local/Cellar/cmake/3.27.4/share/cmake/Modules/Findprotobuf.cmake
         conan install . --build=missing 
         cd build_Macos
         cmake ..
