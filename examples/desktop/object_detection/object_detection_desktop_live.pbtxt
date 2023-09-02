@@ -1,9 +1,8 @@
-# MediaPipe graph that performs object detection with TensorFlow Lite on GPU.
+# MediaPipe graph that performs object detection with TensorFlow Lite on CPU.
 # Used in the examples in
-# mediapipe/examples/android/src/java/com/mediapipe/apps/objectdetectiongpu and
-# mediapipe/examples/ios/objectdetectiongpu.
+# mediapipe/examples/desktop/object_detection:object_detection_cpu.
 
-# Images on GPU coming into and out of the graph.
+# Images on CPU coming into and out of the graph.
 input_stream: "input_video"
 output_stream: "output_video"
 
@@ -31,15 +30,15 @@ node {
   output_stream: "throttled_input_video"
 }
 
-# Transforms the input image on GPU to a 320x320 image. To scale the image, by
+# Transforms the input image on CPU to a 320x320 image. To scale the image, by
 # default it uses the STRETCH scale mode that maps the entire input image to the
 # entire transformed image. As a result, image aspect ratio may be changed and
 # objects in the image may be deformed (stretched or squeezed), but the object
 # detection model used in this graph is agnostic to that deformation.
 node: {
   calculator: "ImageTransformationCalculator"
-  input_stream: "IMAGE_GPU:throttled_input_video"
-  output_stream: "IMAGE_GPU:transformed_input_video"
+  input_stream: "IMAGE:throttled_input_video"
+  output_stream: "IMAGE:transformed_input_video"
   node_options: {
     [type.googleapis.com/mediapipe.ImageTransformationCalculatorOptions] {
       output_width: 320
@@ -48,24 +47,24 @@ node: {
   }
 }
 
-# Converts the transformed input image on GPU into an image tensor stored as a
+# Converts the transformed input image on CPU into an image tensor stored as a
 # TfLiteTensor.
 node {
   calculator: "TfLiteConverterCalculator"
-  input_stream: "IMAGE_GPU:transformed_input_video"
-  output_stream: "TENSORS_GPU:image_tensor"
+  input_stream: "IMAGE:transformed_input_video"
+  output_stream: "TENSORS:image_tensor"
 }
 
-# Runs a TensorFlow Lite model on GPU that takes an image tensor and outputs a
+# Runs a TensorFlow Lite model on CPU that takes an image tensor and outputs a
 # vector of tensors representing, for instance, detection boxes/keypoints and
 # scores.
 node {
   calculator: "TfLiteInferenceCalculator"
-  input_stream: "TENSORS_GPU:image_tensor"
-  output_stream: "TENSORS_GPU:detection_tensors"
+  input_stream: "TENSORS:image_tensor"
+  output_stream: "TENSORS:detection_tensors"
   node_options: {
     [type.googleapis.com/mediapipe.TfLiteInferenceCalculatorOptions] {
-      model_path: "mediapipe/models/ssdlite_object_detection.tflite"
+      model_path: "/mediapipe-lite/examples/desktop/object_detection/ssdlite_object_detection.tflite"
     }
   }
 }
@@ -105,7 +104,7 @@ node {
 # detections. Each detection describes a detected object.
 node {
   calculator: "TfLiteTensorsToDetectionsCalculator"
-  input_stream: "TENSORS_GPU:detection_tensors"
+  input_stream: "TENSORS:detection_tensors"
   input_side_packet: "ANCHORS:anchors"
   output_stream: "DETECTIONS:detections"
   node_options: {
@@ -148,7 +147,7 @@ node {
   output_stream: "output_detections"
   node_options: {
     [type.googleapis.com/mediapipe.DetectionLabelIdToTextCalculatorOptions] {
-      label_map_path: "mediapipe/models/ssdlite_object_detection_labelmap.txt"
+      label_map_path: "/mediapipe-lite/examples/desktop/object_detection/ssdlite_object_detection_labelmap.txt"
     }
   }
 }
@@ -169,7 +168,7 @@ node {
 # Draws annotations and overlays them on top of the input images.
 node {
   calculator: "AnnotationOverlayCalculator"
-  input_stream: "IMAGE_GPU:throttled_input_video"
+  input_stream: "IMAGE:throttled_input_video"
   input_stream: "render_data"
-  output_stream: "IMAGE_GPU:output_video"
+  output_stream: "IMAGE:output_video"
 }

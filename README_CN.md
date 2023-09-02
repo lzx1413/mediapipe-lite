@@ -36,7 +36,7 @@
     * libframework 包含libgraph和其他辅助工程的整合包  
 5. conan 打包
     ```bash 
-    conan create . --build=missing -s build_type=Release
+    conan create . --build=missing -s build_type=Release  -pr:h=docker/x86_gcc_profile  -o 'export_package=True'
     ```
 6. Graph使用示例
     

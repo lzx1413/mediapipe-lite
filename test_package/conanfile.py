@@ -1,7 +1,7 @@
 import os
 
 from conan import ConanFile
-from conan.tools.cmake import CMake, CMakeDeps, cmake_layout
+from conan.tools.cmake import CMake, CMakeDeps, cmake_layout, CMakeToolchain
 from conan.tools.build import cross_building
 
 
@@ -10,6 +10,8 @@ class mediapipeliteTestConan(ConanFile):
     generators = "CMakeToolchain"
 
     def generate(self):
+        tc = CMakeToolchain(self)
+        tc.variables["BUILD_TESTING"] =  False
         deps = CMakeDeps(self)
         deps.check_components_exist = True
         deps.generate()

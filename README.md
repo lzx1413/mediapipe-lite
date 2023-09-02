@@ -34,16 +34,16 @@ Builds the mediapipe graph module using cmake, conan, and allows conan packaging
     # The model in the config file is at https://drive.google.com/file/d/1U9cm5qfOxnGwyB6ypJjYvB6OeOjLZqpC/view?usp=drive_link
     # Download and place in mediapipe/models folder
     # The test image package can be downloaded from https://drive.google.com/file/d/1IjP8aT_iQ8fV_FCuUJk8TH3_e1X2Y_3Q/view?usp=drive_link
-    bin/object_detection --calculator_graph_config_file=../mediapipe/graphs/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR --output_video_path=$OUTPUT_DIR
+    bin/object_detection --calculator_graph_config_file=../examples/desktop/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR --output_video_path=$OUTPUT_DIR
     # run object detection example with all verbose logs
-    GLOG_v=5 bin/object_detection --calculator_graph_config_file=../mediapipe/graphs/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR --output_video_path=$OUTPUT_DIR
+    GLOG_v=5 bin/object_detection --calculator_graph_config_file=../examples/desktop/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR --output_video_path=$OUTPUT_DIR
     ```
 4. Project Architecture
     * libgraph depends only on protobuf, abseil and glog, and is 1.7M in size for x86 environments.
     * libframework contains libgraph and other auxiliary projects.  
 5. conan package
     ```bash 
-    conan create . --build=missing -s build_type=Release  -pr:h=docker/x86_gcc_profile
+    conan create . --build=missing -s build_type=Release  -pr:h=docker/x86_gcc_profile  -o 'export_package=True'
     ```
 6. Examples of using Graph
     

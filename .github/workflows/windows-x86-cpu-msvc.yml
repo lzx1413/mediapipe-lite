@@ -35,7 +35,6 @@ jobs:
         conan profile detect --force
     - name: build
       run: |
-        rm  'C:/Program Files/CMake/share/cmake-3.27/Modules/FindProtobuf.cmake'
         conan install . --build=missing  -pr:h=docker/x86_msvc_profile
         cd build_Windows
         cmake ..
