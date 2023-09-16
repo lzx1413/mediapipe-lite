@@ -80,6 +80,9 @@ add_library(framework )
 add_subdirectory(formats)
 add_subdirectory(tool)
 target_link_libraries(framework PUBLIC graph stb::stb opencv::opencv_core_alias opencv::opencv_highgui_alias opencv::opencv_imgproc_alias opencv::opencv_videoio_alias gpu util) 
+add_clang_format_target(framework)
+else()
+add_clang_format_target(graph)
 endif()
 install(
   TARGETS

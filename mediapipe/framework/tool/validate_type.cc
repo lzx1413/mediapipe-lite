@@ -23,12 +23,13 @@
 #include "mediapipe/framework/calculator_framework.h"
 #include "mediapipe/framework/legacy_calculator_support.h"
 #include "mediapipe/framework/packet_generator.h"
-#include "mediapipe/framework/packet_generator.pb.h"
 #include "mediapipe/framework/packet_type.h"
 #include "mediapipe/framework/port/map_util.h"
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/tool/status_util.h"
+
+#include "mediapipe/framework/packet_generator.pb.h"
 
 #if !defined(MEDIAPIPE_MOBILE) && !defined(MEDIAPIPE_LITE)
 #include "absl/synchronization/blocking_counter.h"

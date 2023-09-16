@@ -17,9 +17,9 @@
 #include <fcntl.h>
 #if !defined(_MSC_VER)
 #include <unistd.h>
-#else 
+#else
 #include <wtypes.h>
-#define ulong ULONG 
+#define ulong ULONG
 #define uint UINT
 #endif
 
@@ -34,16 +34,17 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/substitute.h"
-#include "mediapipe/framework/calculator.pb.h"
 #include "mediapipe/framework/deps/file_path.h"
 #include "mediapipe/framework/deps/no_destructor.h"
-#include "mediapipe/framework/formats/image_format.pb.h"
 #include "mediapipe/framework/port/advanced_proto_inc.h"
 #include "mediapipe/framework/port/file_helpers.h"
 #include "mediapipe/framework/port/logging.h"
 #include "mediapipe/framework/port/proto_ns.h"
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/framework/port/status_macros.h"
+
+#include "mediapipe/framework/calculator.pb.h"
+#include "mediapipe/framework/formats/image_format.pb.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -213,7 +214,8 @@ bool CompareImageFrames(const ImageFrame& image1, const ImageFrame& image2,
   auto status = CompareImageFrames(image1, image2, max_color_diff,
                                    max_alpha_diff, max_avg_diff, diff_image);
   if (status.ok()) return true;
-  if (error_message) *error_message = std::string(std::string(status.message()));
+  if (error_message)
+    *error_message = std::string(std::string(status.message()));
   return false;
 }
 
@@ -270,11 +272,14 @@ absl::StatusOr<std::unique_ptr<ImageFrame>> DecodeTestImage(
     absl::string_view encoded, ImageFormat::Format format) {
   // stbi_load determines the output pixel format based on the desired channels.
   // 0 means "use whatever's in the file".
-  int desired_channels = format == ImageFormat::UNKNOWN ? 0
-                         : format == ImageFormat::SRGBA ? 4
-                         : format == ImageFormat::SRGB  ? 3
-                         : format == ImageFormat::GRAY8 ? 1
-                                                        : -1;
+  int desired_channels =
+      format == ImageFormat::UNKNOWN
+          ? 0
+          : format == ImageFormat::SRGBA
+                ? 4
+                : format == ImageFormat::SRGB
+                      ? 3
+                      : format == ImageFormat::GRAY8 ? 1 : -1;
   RET_CHECK(desired_channels >= 0)
       << "unsupported output format requested: " << format;
 
@@ -288,10 +293,12 @@ absl::StatusOr<std::unique_ptr<ImageFrame>> DecodeTestImage(
   // file contains.
   int output_channels = desired_channels ? desired_channels : channels_in_file;
   if (format == ImageFormat::UNKNOWN) {
-    format = output_channels == 4   ? ImageFormat::SRGBA
-             : output_channels == 3 ? ImageFormat::SRGB
-             : output_channels == 1 ? ImageFormat::GRAY8
-                                    : ImageFormat::UNKNOWN;
+    format = output_channels == 4
+                 ? ImageFormat::SRGBA
+                 : output_channels == 3
+                       ? ImageFormat::SRGB
+                       : output_channels == 1 ? ImageFormat::GRAY8
+                                              : ImageFormat::UNKNOWN;
     RET_CHECK(format != ImageFormat::UNKNOWN)
         << "unsupported number of channels: " << output_channels;
   }

@@ -21,12 +21,10 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/substitute.h"
-#include "mediapipe/framework/calculator.pb.h"
 #include "mediapipe/framework/calculator_base.h"
 #include "mediapipe/framework/graph_service_manager.h"
 #include "mediapipe/framework/legacy_calculator_support.h"
 #include "mediapipe/framework/packet_generator.h"
-#include "mediapipe/framework/packet_generator.pb.h"
 #include "mediapipe/framework/packet_set.h"
 #include "mediapipe/framework/packet_type.h"
 #include "mediapipe/framework/port.h"
@@ -39,13 +37,16 @@
 #include "mediapipe/framework/port/status_builder.h"
 #include "mediapipe/framework/port/topologicalsorter.h"
 #include "mediapipe/framework/status_handler.h"
-#include "mediapipe/framework/stream_handler.pb.h"
-#include "mediapipe/framework/thread_pool_executor.pb.h"
 #include "mediapipe/framework/tool/name_util.h"
 #include "mediapipe/framework/tool/status_util.h"
 #include "mediapipe/framework/tool/subgraph_expansion.h"
 #include "mediapipe/framework/tool/validate.h"
 #include "mediapipe/framework/tool/validate_name.h"
+
+#include "mediapipe/framework/calculator.pb.h"
+#include "mediapipe/framework/packet_generator.pb.h"
+#include "mediapipe/framework/stream_handler.pb.h"
+#include "mediapipe/framework/thread_pool_executor.pb.h"
 
 namespace mediapipe {
 

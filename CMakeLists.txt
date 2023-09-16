@@ -61,6 +61,7 @@ add_definitions(-D_USE_MATH_DEFINES)
 add_definitions(-DNOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
 endif()
+include(${PROJECT_SOURCE_DIR}/cmake/clang_format.cmake)
 
 message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "    C++ flags (Release):"    ${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE})

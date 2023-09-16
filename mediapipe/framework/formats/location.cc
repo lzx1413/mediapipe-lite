@@ -20,8 +20,6 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/substitute.h"
-#include "mediapipe/framework/formats/annotation/locus.pb.h"
-#include "mediapipe/framework/formats/annotation/rasterization.pb.h"
 #include "mediapipe/framework/port/canonical_errors.h"
 #include "mediapipe/framework/port/integral_types.h"
 #include "mediapipe/framework/port/logging.h"
@@ -31,6 +29,9 @@
 #include "mediapipe/framework/port/statusor.h"
 #include "mediapipe/framework/tool/status_util.h"
 #include "mediapipe/framework/type_map.h"
+
+#include "mediapipe/framework/formats/annotation/locus.pb.h"
+#include "mediapipe/framework/formats/annotation/rasterization.pb.h"
 
 namespace mediapipe {
 

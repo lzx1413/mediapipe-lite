@@ -26,15 +26,16 @@
 #include "absl/strings/str_cat.h"
 #include "absl/strings/str_join.h"
 #include "absl/strings/str_split.h"
-#include "mediapipe/framework/deps/proto_descriptor.pb.h"
 #include "mediapipe/framework/port/canonical_errors.h"
 #include "mediapipe/framework/port/integral_types.h"
 #include "mediapipe/framework/port/logging.h"
 #include "mediapipe/framework/port/map_util.h"
 #include "mediapipe/framework/port/ret_check.h"
 #include "mediapipe/framework/port/status.h"
-#include "mediapipe/framework/tool/calculator_graph_template.pb.h"
 #include "mediapipe/framework/tool/proto_util_lite.h"
+
+#include "mediapipe/framework/deps/proto_descriptor.pb.h"
+#include "mediapipe/framework/tool/calculator_graph_template.pb.h"
 
 using mediapipe::proto_ns::Descriptor;
 using mediapipe::proto_ns::DynamicMessageFactory;

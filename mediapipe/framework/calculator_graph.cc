@@ -33,7 +33,6 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "absl/synchronization/mutex.h"
-#include "mediapipe/framework/calculator.pb.h"
 #include "mediapipe/framework/calculator_base.h"
 #include "mediapipe/framework/counter_factory.h"
 #include "mediapipe/framework/delegating_executor.h"
@@ -41,7 +40,6 @@
 #include "mediapipe/framework/input_stream_manager.h"
 #include "mediapipe/framework/mediapipe_profiling.h"
 #include "mediapipe/framework/packet_generator.h"
-#include "mediapipe/framework/packet_generator.pb.h"
 #include "mediapipe/framework/packet_set.h"
 #include "mediapipe/framework/packet_type.h"
 #include "mediapipe/framework/port.h"
@@ -53,9 +51,7 @@
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/port/status_builder.h"
 #include "mediapipe/framework/status_handler.h"
-#include "mediapipe/framework/status_handler.pb.h"
 #include "mediapipe/framework/thread_pool_executor.h"
-#include "mediapipe/framework/thread_pool_executor.pb.h"
 #include "mediapipe/framework/tool/fill_packet_set.h"
 #include "mediapipe/framework/tool/status_util.h"
 #include "mediapipe/framework/tool/tag_map.h"
@@ -64,6 +60,11 @@
 #include "mediapipe/framework/validated_graph_config.h"
 #include "mediapipe/gpu/graph_support.h"
 #include "mediapipe/util/cpu_util.h"
+
+#include "mediapipe/framework/calculator.pb.h"
+#include "mediapipe/framework/packet_generator.pb.h"
+#include "mediapipe/framework/status_handler.pb.h"
+#include "mediapipe/framework/thread_pool_executor.pb.h"
 #if !MEDIAPIPE_DISABLE_GPU
 #include "mediapipe/gpu/gpu_shared_data_internal.h"
 #endif  // !MEDIAPIPE_DISABLE_GPU
@@ -1233,12 +1234,12 @@ bool CalculatorGraph::UnthrottleSources() {
     }
     int new_size = stream->QueueSize() + 1;
     stream->SetMaxQueueSize(new_size);
-    #if !defined(_MSC_VER)
+#if !defined(_MSC_VER)
     LOG_EVERY_N(WARNING, 100)
         << "Resolved a deadlock by increasing max_queue_size of input stream: "
         << stream->Name() << " to: " << new_size
         << ". Consider increasing max_queue_size for better performance.";
-    #endif
+#endif
   }
   return !full_streams.empty();
 }

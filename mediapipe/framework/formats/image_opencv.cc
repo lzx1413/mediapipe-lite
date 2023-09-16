@@ -14,8 +14,9 @@
 
 #include "mediapipe/framework/formats/image_opencv.h"
 
-#include "mediapipe/framework/formats/image_format.pb.h"
 #include "mediapipe/framework/port/logging.h"
+
+#include "mediapipe/framework/formats/image_format.pb.h"
 
 namespace {
 // Maps Image format to OpenCV Mat type.

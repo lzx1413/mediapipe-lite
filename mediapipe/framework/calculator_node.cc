@@ -26,7 +26,6 @@
 #include "absl/strings/string_view.h"
 #include "absl/strings/substitute.h"
 #include "absl/synchronization/mutex.h"
-#include "mediapipe/framework/calculator.pb.h"
 #include "mediapipe/framework/calculator_base.h"
 #include "mediapipe/framework/counter_factory.h"
 #include "mediapipe/framework/input_stream_manager.h"
@@ -46,6 +45,8 @@
 #include "mediapipe/framework/tool/status_util.h"
 #include "mediapipe/framework/tool/tag_map.h"
 #include "mediapipe/framework/tool/validate_name.h"
+
+#include "mediapipe/framework/calculator.pb.h"
 
 namespace mediapipe {
 

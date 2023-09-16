@@ -22,8 +22,9 @@
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/port/status_builder.h"
 #include "mediapipe/framework/port/status_macros.h"
-#include "mediapipe/framework/tool/packet_generator_wrapper_calculator.pb.h"
 #include "mediapipe/framework/tool/tag_map.h"
+
+#include "mediapipe/framework/tool/packet_generator_wrapper_calculator.pb.h"
 
 namespace mediapipe {
 

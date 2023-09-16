@@ -27,6 +27,7 @@
 #include "mediapipe/framework/port/status.h"
 #include "mediapipe/framework/port/status_macros.h"
 #include "mediapipe/framework/tool/container_util.h"
+
 #include "mediapipe/framework/tool/switch_container.pb.h"
 
 namespace mediapipe {

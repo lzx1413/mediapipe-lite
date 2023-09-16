@@ -2,6 +2,7 @@
 #include "mediapipe/framework/calculator_registry.h"
 #include "mediapipe/framework/output_side_packet.h"
 #include "mediapipe/framework/packet_generator.h"
+
 #include "mediapipe/framework/tool/packet_generator_wrapper_calculator.pb.h"
 
 namespace mediapipe {

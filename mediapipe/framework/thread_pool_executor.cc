@@ -19,8 +19,9 @@
 #include "mediapipe/framework/port/canonical_errors.h"
 #include "mediapipe/framework/port/logging.h"
 #include "mediapipe/framework/port/status_builder.h"
-#include "mediapipe/framework/thread_pool_executor.pb.h"
 #include "mediapipe/util/cpu_util.h"
+
+#include "mediapipe/framework/thread_pool_executor.pb.h"
 
 namespace mediapipe {
 

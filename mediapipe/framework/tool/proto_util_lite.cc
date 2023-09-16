@@ -22,8 +22,9 @@
 #include "mediapipe/framework/port/canonical_errors.h"
 #include "mediapipe/framework/port/logging.h"
 #include "mediapipe/framework/port/ret_check.h"
-#include "mediapipe/framework/tool/field_data.pb.h"
 #include "mediapipe/framework/type_map.h"
+
+#include "mediapipe/framework/tool/field_data.pb.h"
 
 #define RET_CHECK_NO_LOG(cond) RET_CHECK(cond).SetNoLogging()
 

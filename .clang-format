@@ -1,6 +1,4 @@
----
 BasedOnStyle: Google
----
 Language:                               Cpp
 Cpp11BracedListStyle:                   true
 Standard:                               Cpp11
@@ -33,4 +31,3 @@ IncludeCategories:
   # The rest
   - Regex:       '.*'
     Priority:    5
----

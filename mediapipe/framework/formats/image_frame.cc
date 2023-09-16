@@ -24,10 +24,11 @@
 #include <utility>
 
 #include "absl/strings/str_cat.h"
-#include "mediapipe/framework/formats/image_format.pb.h"
 #include "mediapipe/framework/port/aligned_malloc_and_free.h"
 #include "mediapipe/framework/port/logging.h"
 #include "mediapipe/framework/port/proto_ns.h"
+
+#include "mediapipe/framework/formats/image_format.pb.h"
 
 namespace mediapipe {
 

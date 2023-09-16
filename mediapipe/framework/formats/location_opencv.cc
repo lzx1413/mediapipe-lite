@@ -16,11 +16,12 @@
 
 #include "absl/memory/memory.h"
 #include "absl/strings/substitute.h"
-#include "mediapipe/framework/formats/annotation/rasterization.pb.h"
 #include "mediapipe/framework/formats/location.h"
 #include "mediapipe/framework/port/logging.h"
 #include "mediapipe/framework/port/opencv_imgproc_inc.h"
 #include "mediapipe/framework/port/statusor.h"
+
+#include "mediapipe/framework/formats/annotation/rasterization.pb.h"
 
 namespace mediapipe {
 
