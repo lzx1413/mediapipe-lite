@@ -1,48 +1,87 @@
 # Mediapipe-lite
-利用cmake, conan进行构建mediapipe的graph模块，并允许进行conan 打包，应用于各种计算图任务中
+利用cmake进行构建mediapipe的graph模块，支持vcpkg或conan进行依赖管理
 
-## Quick Start
-1. 编译Docker镜像 
-    ```
-    cd docker 
-    docker build -t x86_u20_cpp_gcc9 -f Dockerfile.x86_u20_gcc9 --no-cache  .
-    ```
+## 编译方式
 
-2. 启动docker
-    ```
-    docker run -v ${PWD}:/mediapipe-lite --name x86_u20_med -it x86_u20_cpp_gcc9:latest -c "cd /mediapipe-lite  &&  bash docker/init_zsh.sh && zsh"
-    ```
-3. 编译测试
-    ```bash
-    # conan安装依赖, 仅在第一次编译时运行
-    conan install . --build=missing -pr:h=docker/x86_gcc_profile
-    cd build
-    cmake ..
-    make -j 4
-    # 声明动态库路径, 取消设置可运行 source deactivate_conanrun.sh
-    source conanrun.sh
-    # run unit test
-    make test
-    # run object detection example 
-    # config 文件内的模型在 https://drive.google.com/file/d/1U9cm5qfOxnGwyB6ypJjYvB6OeOjLZqpC/view?usp=drive_link
-    # 下载后放置到 mediapipe/models 文件夹下
-    # 测试图像包可从 https://drive.google.com/file/d/1IjP8aT_iQ8fV_FCuUJk8TH3_e1X2Y_3Q/view?usp=drive_link 下载
-    bin/object_detection --calculator_graph_config_file=../mediapipe/graphs/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR  --output_video_path=$OUTPUT_DIR
-    # run object detection example  with all verbose logs
-    GLOG_v=5 bin/object_detection --calculator_graph_config_file=../mediapipe/graphs/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR  --output_video_path=$OUTPUT_DIR
-    ```
-4. 工程架构
-    * libgraph 仅依赖 protobuf, abseil 和 glog， x86环境下动态库体积为1.7M
-    * libframework 包含libgraph和其他辅助工程的整合包  
-5. conan 打包
-    ```bash 
-    conan create . --build=missing -s build_type=Release  -pr:h=docker/x86_gcc_profile  -o 'export_package=True'
-    ```
-6. Graph使用示例
-    
-    具体示例代码见 tutorial 文件夹
+### 方式1: vcpkg (推荐)
 
-    ```cpp
+vcpkg提供更简单的依赖管理，自动安装所需库。
+
+#### 1. 安装vcpkg
+```bash
+git clone https://github.com/microsoft/vcpkg.git ~/vcpkg
+cd ~/vcpkg && ./bootstrap-vcpkg.sh
+export VCPKG_ROOT=~/vcpkg  # 添加到 ~/.bashrc 以持久化
+```
+
+#### 2. 编译 (GRAPH_ONLY - 最小依赖)
+```bash
+# 配置 - vcpkg会自动安装依赖 (abseil, protobuf, glog)
+cmake --preset release -DBUILD_PROTO_FILES=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_GRAPH_ONLY=ON
+
+# 编译
+cmake --build build -j$(nproc)
+```
+
+#### 3. 输出库
+- `build/mediapipe/framework/libgraph.a` (~5M) - 核心图引擎
+- `build/mediapipe/framework/stream_handler/libstream_handler.a` (~1M) - 流处理器
+
+### 方式2: Conan + Docker (传统方式)
+
+#### 1. 编译Docker镜像 
+```bash
+cd docker 
+docker build -t x86_u20_cpp_gcc9 -f Dockerfile.x86_u20_gcc9 --no-cache .
+```
+
+#### 2. 启动docker
+```bash
+docker run -v ${PWD}:/mediapipe-lite --name x86_u20_med -it x86_u20_cpp_gcc9:latest -c "cd /mediapipe-lite && bash docker/init_zsh.sh && zsh"
+```
+
+#### 3. 编译测试
+```bash
+# conan安装依赖, 仅在第一次编译时运行
+conan install . --build=missing -pr:h=docker/x86_gcc_profile
+cd build
+cmake ..
+make -j 4
+# 声明动态库路径, 取消设置可运行 source deactivate_conanrun.sh
+source conanrun.sh
+# run unit test
+make test
+# run object detection example 
+# config 文件内的模型在 https://drive.google.com/file/d/1U9cm5qfOxnGwyB6ypJjYvB6OeOjLZqpC/view?usp=drive_link
+# 下载后放置到 mediapipe/models 文件夹下
+# 测试图像包可从 https://drive.google.com/file/d/1IjP8aT_iQ8fV_FCuUJk8TH3_e1X2Y_3Q/view?usp=drive_link 下载
+bin/object_detection --calculator_graph_config_file=../mediapipe/graphs/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR --output_video_path=$OUTPUT_DIR
+# run object detection example with all verbose logs
+GLOG_v=5 bin/object_detection --calculator_graph_config_file=../mediapipe/graphs/object_detection/object_detection_desktop_live.pbtxt --input_video_path=$IMAGE_DIR --output_video_path=$OUTPUT_DIR
+```
+
+## 工程架构
+* **libgraph** (~5M) 仅依赖 protobuf, abseil 和 glog - 最小核心图引擎
+* **libstream_handler** (~1M) - 流处理逻辑，需要whole-archive链接
+* **libframework** 包含libgraph和其他辅助工程的整合包 (opencv, eigen等)
+
+## CMake编译选项
+
+| 选项 | 默认值 | 描述 |
+|--------|---------|-------------|
+| `BUILD_GRAPH_ONLY` | OFF | 仅编译graph模块 (最小依赖: abseil, protobuf, glog) |
+| `BUILD_TESTS` | ON | 编译单元测试 |
+| `BUILD_EXAMPLES` | ON | 编译示例程序 |
+| `BUILD_PROTO_FILES` | ON | 重新生成protobuf文件 |
+| `ENABLE_RTTI` | ON | 启用RTTI |
+
+示例: `cmake --preset release -DBUILD_TESTS=OFF -DBUILD_GRAPH_ONLY=ON`
+
+## Graph使用示例
+
+具体示例代码见 tutorial 文件夹
+
+```cpp
     // main.cpp
     #include "mediapipe/framework/calculator_graph.h"
     #include "mediapipe/framework/port/logging.h"
@@ -141,10 +180,10 @@ I20230721 17:08:09.525885 140015 hello_world.cc:57] Hello World!
 I20230721 17:08:09.525892 140015 hello_world.cc:57] Hello World!
 ```
 Windows 系统通过MSVC编译本工程请参考 [BuildWithMSVC](./doc/build_with_msvc.md)
+
 ## TODO List
 * [ ] 逐步清理冗余代码
-* [ ] 利用docker/conan支持多平台编译
 * [ ] 增加 doc, CI, CD, CT, 代码格式化检查等相关流程
 * [ ] 完善教程和代码示例
-* [ ] 增加pipieline测试benchmark
+* [ ] 增加pipeline测试benchmark
 * [ ] 完善python接口，允许增加python node

@@ -19,4 +19,4 @@ resource_util_default.cc
 time_series_util.cc
 ${PROJECT_SOURCE_DIR}/mediapipe/framework/formats/time_series_header.pb.cc
 )
-target_link_libraries(util PUBLIC abseil::abseil glog::glog protobuf::protobuf opencv::opencv Eigen3::Eigen) 
+target_link_libraries(util PUBLIC abseil::abseil glog::glog protobuf::protobuf opencv_core Eigen3::Eigen) 

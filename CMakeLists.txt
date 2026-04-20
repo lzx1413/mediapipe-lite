@@ -73,13 +73,41 @@ message(STATUS "    C flags (Debug):"        ${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_DE
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-find_package(absl REQUIRED)
-find_package(glog REQUIRED)
+find_package(absl CONFIG REQUIRED)
+find_package(glog CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
+# vcpkg provides component targets (absl::strings, etc.) while Conan provides abseil::abseil
+# Create combined target for compatibility with existing code expecting 'abseil::abseil'
+if(NOT TARGET abseil::abseil)
+    set(ABSEIL_COMPONENTS
+        absl::strings
+        absl::status
+        absl::statusor
+        absl::synchronization
+        absl::time
+        absl::flags_parse
+        absl::flat_hash_map
+        absl::flat_hash_set
+        absl::optional
+        absl::variant
+        absl::span
+        absl::memory
+        absl::str_format
+        absl::cleanup
+    )
+    add_library(abseil::abseil INTERFACE IMPORTED GLOBAL)
+    target_link_libraries(abseil::abseil INTERFACE ${ABSEIL_COMPONENTS})
+endif()
+# vcpkg provides protobuf::libprotobuf while Conan provides protobuf::protobuf
+# Create target for compatibility (ALIAS cannot be exported, use INTERFACE IMPORTED)
+if(NOT TARGET protobuf::protobuf)
+    add_library(protobuf::protobuf INTERFACE IMPORTED GLOBAL)
+    target_link_libraries(protobuf::protobuf INTERFACE protobuf::libprotobuf)
+endif()
 if(NOT BUILD_GRAPH_ONLY)
 find_package(OpenCV REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(stb REQUIRED)
+find_package(stb CONFIG REQUIRED)
 endif()
 include_directories(${PROJECT_SOURCE_DIR})
 # generate protobuf files
@@ -204,7 +232,7 @@ set(MEDIAPIPE_INCLUDE_INSTALL_DIR ${INCLUDES_DESTINATION}/mediapipe)
 
 if(BUILD_TESTS)
 enable_testing()
-find_package(GTest REQUIRED)
+find_package(GTest CONFIG REQUIRED)
 include(${PROJECT_SOURCE_DIR}/cmake/macros.cmake)
 endif()
 if(BUILD_EXAMPLES)

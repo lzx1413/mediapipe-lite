@@ -1,1 +1,0 @@
-apt install -y zsh && wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh && bash install.sh && rm install.sh
