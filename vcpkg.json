@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "mediapipelite",
+  "version": "0.1.0",
+  "description": "CMake version of mediapipe graph framework",
+  "dependencies": [
+    "abseil",
+    "protobuf",
+    "glog",
+    "gtest",
+    "benchmark"
+  ]
+}

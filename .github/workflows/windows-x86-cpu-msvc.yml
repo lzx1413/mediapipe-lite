@@ -6,17 +6,21 @@ on:
     paths:
     - '.github/workflows/windows-x86-cpu-msvc.yml'
     - 'CMakeLists.txt'
+    - 'CMakePresets.json'
     - 'cmake/**'
     - 'mediapipe/**'
     - 'examples/**'
+    - 'vcpkg.json'
   pull_request:
     branches: [ main ]
     paths:
     - '.github/workflows/windows-x86-cpu-msvc.yml'
     - 'CMakeLists.txt'
+    - 'CMakePresets.json'
     - 'cmake/**'
     - 'mediapipe/**'
     - 'examples/**'
+    - 'vcpkg.json'
 concurrency:
   group: windows-x86-cpu-msvc-${{ github.ref }}
   cancel-in-progress: true
@@ -27,17 +31,41 @@ jobs:
   windows:
     name: vs2022
     runs-on: windows-2022
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
     steps:
-    - uses: actions/checkout@v3
-    - name: install_conan
-      run: | 
-        pip3 install conan
-        conan profile detect --force
-    - name: build
+    - uses: actions/checkout@v4
+
+    - name: Setup vcpkg
       run: |
-        conan install . --build=missing  -pr:h=docker/x86_msvc_profile
-        cd build_Windows
-        cmake ..
-        cmake --build . --config Release
-    - name: test
-      run: cd  build_Windows && ctest
+        git clone https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT --depth 1
+        & "$env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
+
+    - name: Cache vcpkg packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/AppData/Local/vcpkg/archives
+          ${{ env.VCPKG_ROOT }}/installed
+        key: vcpkg-windows-${{ hashFiles('vcpkg.json') }}
+        restore-keys: vcpkg-windows-
+
+    - name: Install dependencies via vcpkg
+      run: |
+        cd $env:GITHUB_WORKSPACE
+        & "$env:VCPKG_ROOT\vcpkg.exe" install --x-manifest-root=$env:GITHUB_WORKSPACE --triplet x64-windows
+
+    - name: Configure and Build
+      run: |
+        cmake -B build -S . -G "Visual Studio 17 2022" -A x64 `
+          -DCMAKE_BUILD_TYPE=Release `
+          -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake" `
+          -DVCPKG_TARGET_TRIPLET=x64-windows `
+          -DBUILD_PROTO_FILES=ON `
+          -DBUILD_TESTS=OFF `
+          -DBUILD_EXAMPLES=OFF `
+          -DBUILD_GRAPH_ONLY=ON
+        cmake --build build --config Release -j
+
+    - name: Verify
+      run: dir build\mediapipe\framework\libgraph.a build\mediapipe\framework\stream_handler\libstream_handler.a

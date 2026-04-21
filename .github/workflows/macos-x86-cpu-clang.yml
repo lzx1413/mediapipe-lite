@@ -6,44 +6,65 @@ on:
     paths:
     - '.github/workflows/macos-x86-cpu-clang.yml'
     - 'CMakeLists.txt'
+    - 'CMakePresets.json'
     - 'cmake/**'
     - 'mediapipe/**'
     - 'examples/**'
+    - 'vcpkg.json'
   pull_request:
     branches: [ main ]
     paths:
     - '.github/workflows/macos-x86-cpu-clang.yml'
     - 'CMakeLists.txt'
+    - 'CMakePresets.json'
     - 'cmake/**'
     - 'mediapipe/**'
     - 'examples/**'
+    - 'vcpkg.json'
 concurrency:
   group: macos-x86-cpu-clang-${{ github.ref }}
   cancel-in-progress: true
-env:
-  DEVELOPER_DIR: /Applications/Xcode_13.4.1.app/Contents/Developer
-  MAC_DEPLOYMENT_TARGET: '10.9'
-  MAC_ARM64_DEPLOYMENT_TARGET: '11.0'
-  ENABLE_BITCODE: OFF
-  ENABLE_ARC: OFF
-  ENABLE_VISIBILITY: OFF
 permissions:
   contents: read
 
 jobs:
   macos-clang:
-    runs-on: macos-12
+    runs-on: macos-13
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
     steps:
-    - uses: actions/checkout@v3
-    - name: install_conan
-      run: | 
-        pip3 install conan
-        conan profile detect --force
-    - name: build
+    - uses: actions/checkout@v4
+
+    - name: Setup vcpkg
       run: |
-        conan install . --build=missing 
-        cd build_Macos
-        cmake ..
-        make -j 2
-    - name: test
-      run: cd  build_Macos && make test
+        git clone https://github.com/microsoft/vcpkg.git $VCPKG_ROOT --depth 1
+        $VCPKG_ROOT/bootstrap-vcpkg.sh -disableMetrics
+
+    - name: Cache vcpkg packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/vcpkg/archives
+          ${{ env.VCPKG_ROOT }}/installed
+        key: vcpkg-macos-${{ hashFiles('vcpkg.json') }}
+        restore-keys: vcpkg-macos-
+
+    - name: Install dependencies via vcpkg
+      run: |
+        cd ${{ github.workspace }}
+        $VCPKG_ROOT/vcpkg install --x-manifest-root=${{ github.workspace }} --triplet x64-osx
+
+    - name: Configure and Build
+      run: |
+        cmake -B build -S . -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+          -DVCPKG_TARGET_TRIPLET=x64-osx \
+          -DBUILD_PROTO_FILES=ON \
+          -DBUILD_TESTS=OFF \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_GRAPH_ONLY=ON
+        cmake --build build -j$(sysctl -n hw.ncpu)
+
+    - name: Verify
+      run: ls -lh build/mediapipe/framework/libgraph.a build/mediapipe/framework/stream_handler/libstream_handler.a

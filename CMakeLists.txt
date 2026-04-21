@@ -76,6 +76,26 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 find_package(absl CONFIG REQUIRED)
 find_package(glog CONFIG REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
+
+# Get protoc executable path from protobuf::protoc target
+if(TARGET protobuf::protoc)
+    get_target_property(PROTOBUF_PROTOC_EXECUTABLE protobuf::protoc IMPORTED_LOCATION_RELEASE)
+    if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")
+        get_target_property(PROTOBUF_PROTOC_EXECUTABLE protobuf::protoc IMPORTED_LOCATION_DEBUG)
+    endif()
+    if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")
+        get_target_property(PROTOBUF_PROTOC_EXECUTABLE protobuf::protoc IMPORTED_LOCATION)
+    endif()
+endif()
+if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")
+    # Fallback: use protoc from vcpkg installed tools
+    if(DEFINED VCPKG_TARGET_TRIPLET)
+        set(PROTOBUF_PROTOC_EXECUTABLE "${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/tools/protobuf/protoc")
+    else()
+        set(PROTOBUF_PROTOC_EXECUTABLE "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-linux/tools/protobuf/protoc")
+    endif()
+endif()
+message(STATUS "Using protoc: ${PROTOBUF_PROTOC_EXECUTABLE}")
 # vcpkg provides component targets (absl::strings, etc.) while Conan provides abseil::abseil
 # Create combined target for compatibility with existing code expecting 'abseil::abseil'
 if(NOT TARGET abseil::abseil)
@@ -112,48 +132,36 @@ endif()
 include_directories(${PROJECT_SOURCE_DIR})
 # generate protobuf files
 if(BUILD_PROTO_FILES)
-    file(GLOB protobuf_files
+    file(GLOB_RECURSE protobuf_files
             mediapipe/framework/*.proto
-            mediapipe/framework/tool/*.proto
-            mediapipe/framework/deps/*.proto
-            mediapipe/framework/testdata/*.proto
-            mediapipe/framework/formats/*.proto
-            mediapipe/framework/formats/annotation/*.proto
-            mediapipe/framework/formats/motion/*.proto
-            mediapipe/framework/formats/object_detection/*.proto
-            mediapipe/framework/stream_handler/*.proto
             mediapipe/gpu/*.proto
-            mediapipe/calculators/internal/*.proto
-            mediapipe/calculators/core/*.proto
-            mediapipe/calculators/tflite/*.proto
-            mediapipe/calculators/image/*.proto
-            mediapipe/calculators/util/*.proto
-            mediapipe/calculators/video/*.proto
+            mediapipe/calculators/**/*.proto
             mediapipe/util/*.proto
+            mediapipe/util/**/*.proto
             )
     SET(PROTO_META_BASE_DIR ${CMAKE_CURRENT_BINARY_DIR})
     LIST(APPEND PROTO_FLAGS -I${CMAKE_CURRENT_SOURCE_DIR})
     FOREACH(FIL ${protobuf_files})
 
-    GET_FILENAME_COMPONENT(FIL_WE ${FIL} NAME_WE)
+        GET_FILENAME_COMPONENT(FIL_WE ${FIL} NAME_WE)
+        GET_FILENAME_COMPONENT(FIL_DIR ${FIL} DIRECTORY)
 
-        string(REGEX REPLACE ".+/(.+)\\..*" "\\1" FILE_NAME ${FIL})
-        string(REGEX REPLACE "(.+)\\${FILE_NAME}.*" "\\1" FILE_PATH ${FIL})
-
-        string(REGEX MATCH "(/mediapipe/framework.*|/mediapipe/util.*|/mediapipe/calculators/video/|/mediapipe/calculators/util/|/mediapipe/calculators/internal/|/mediapipe/calculators/tflite/|/mediapipe/calculators/image/|/mediapipe/gpu/|/mediapipe/calculators/core/|/mediapipe/util/)" OUT_PATH ${FILE_PATH})
-
-        set(PROTO_SRCS "${CMAKE_CURRENT_BINARY_DIR}${OUT_PATH}${FIL_WE}.pb.cc")
-        set(PROTO_HDRS "${CMAKE_CURRENT_BINARY_DIR}${OUT_PATH}${FIL_WE}.pb.h")
+        # protoc generates files based on proto file's relative path from --proto_path
+        # e.g., mediapipe/util/tracking/tracking.proto -> build/mediapipe/util/tracking/tracking.pb.cc
+        string(REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" REL_PATH ${FIL})
+        set(PROTO_SRCS "${CMAKE_CURRENT_BINARY_DIR}/${REL_PATH}")
+        string(REPLACE ".proto" ".pb.cc" PROTO_SRCS ${PROTO_SRCS})
+        set(PROTO_HDRS "${PROTO_SRCS}")
+        string(REPLACE ".pb.cc" ".pb.h" PROTO_HDRS ${PROTO_HDRS})
 
         EXECUTE_PROCESS(
                 COMMAND ${PROTOBUF_PROTOC_EXECUTABLE} ${PROTO_FLAGS} --cpp_out=${PROTO_META_BASE_DIR} ${FIL}
         )
-        set_source_files_properties(${FILE_PATH}${FIL_WE}.pb.cc PROPERTIES GENERATED True)
-        set_source_files_properties(${FILE_PATH}${FIL_WE}.pb.h PROPERTIES GENERATED True)
-        # message("Copying " ${PROTO_SRCS} " to " ${FILE_PATH})
+        set_source_files_properties(${FIL_DIR}/${FIL_WE}.pb.cc PROPERTIES GENERATED True)
+        set_source_files_properties(${FIL_DIR}/${FIL_WE}.pb.h PROPERTIES GENERATED True)
 
-        file(COPY ${PROTO_SRCS} DESTINATION ${FILE_PATH})
-        file(COPY ${PROTO_HDRS} DESTINATION ${FILE_PATH})
+        file(COPY ${PROTO_SRCS} DESTINATION ${FIL_DIR})
+        file(COPY ${PROTO_HDRS} DESTINATION ${FIL_DIR})
 
     ENDFOREACH()
 endif()

@@ -6,17 +6,21 @@ on:
     paths:
     - '.github/workflows/linux-x86-cpu-gcc.yml'
     - 'CMakeLists.txt'
+    - 'CMakePresets.json'
     - 'cmake/**'
     - 'mediapipe/**'
     - 'examples/**'
+    - 'vcpkg.json'
   pull_request:
     branches: [ main ]
     paths:
     - '.github/workflows/linux-x86-cpu-gcc.yml'
     - 'CMakeLists.txt'
+    - 'CMakePresets.json'
     - 'cmake/**'
     - 'mediapipe/**'
     - 'examples/**'
+    - 'vcpkg.json'
 concurrency:
   group: linux-x86-cpu-gcc-${{ github.ref }}
   cancel-in-progress: true
@@ -25,23 +29,42 @@ permissions:
 
 jobs:
   linux-gcc:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
     steps:
-    - uses: actions/checkout@v3
-    - name: update
-      run: sudo apt update
-    - name: install_dep
-      run: sudo apt install libgtk2.0-dev libva-dev
-    - name: install_conan
-      run: | 
-        pip3 install conan
-        conan profile detect --force
-    - name: build
+    - uses: actions/checkout@v4
+
+    - name: Setup vcpkg
       run: |
-        conan graph info .
-        conan install . --build=missing -pr:h=docker/x86_gcc_profile
-        cd build_Linux
-        cmake ..
-        make -j 2
-    - name: test
-      run: cd  build_Linux && make test
+        git clone https://github.com/microsoft/vcpkg.git $VCPKG_ROOT --depth 1
+        $VCPKG_ROOT/bootstrap-vcpkg.sh -disableMetrics
+
+    - name: Cache vcpkg packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/vcpkg/archives
+          ${{ env.VCPKG_ROOT }}/installed
+        key: vcpkg-linux-${{ hashFiles('vcpkg.json') }}
+        restore-keys: vcpkg-linux-
+
+    - name: Install dependencies via vcpkg
+      run: |
+        cd ${{ github.workspace }}
+        $VCPKG_ROOT/vcpkg install --x-manifest-root=${{ github.workspace }} --triplet x64-linux
+
+    - name: Configure and Build
+      run: |
+        cmake -B build -S . -G Ninja \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+          -DVCPKG_TARGET_TRIPLET=x64-linux \
+          -DBUILD_PROTO_FILES=ON \
+          -DBUILD_TESTS=OFF \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_GRAPH_ONLY=ON
+        cmake --build build -j$(nproc)
+
+    - name: Verify
+      run: ls -lh build/mediapipe/framework/libgraph.a build/mediapipe/framework/stream_handler/libstream_handler.a

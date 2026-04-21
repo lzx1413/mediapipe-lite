@@ -42,5 +42,6 @@ third
 data
 *.tflite
 *.json
+!vcpkg.json
 *.pyc
 .cache
