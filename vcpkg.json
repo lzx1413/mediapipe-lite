@@ -6,8 +6,6 @@
   "dependencies": [
     "abseil",
     "protobuf",
-    "glog",
-    "gtest",
-    "benchmark"
+    "glog"
   ]
 }

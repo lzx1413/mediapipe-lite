@@ -1,29 +1,23 @@
-Compilation environment:
-1. windows 11
-2. visual studio 2022
+## Build with MSVC
 
-Compilation steps:
-1. Install miniconda
-2. Install cmake, delete the FindProtobuf.cmake file in the C:\Program Files\CMake\share\cmake-3.27\Modules folder, otherwise it will conflict with protobuf under conan
-3. Install conan in the conda environment
-    ```bash 
-    pip install conan
-    conan profile detect --force
-    # set compiler.cppstd=17 in ~/.conan2/profiles/default
+1. Compilation environment:
+   1. Windows 11
+   2. Visual Studio 2022
+
+2. Compilation steps:
+   1. Install vcpkg
+    ```bash
+    git clone https://github.com/microsoft/vcpkg.git
+    cd vcpkg && bootstrap-vcpkg.bat
+    set VCPKG_ROOT=<vcpkg install dir>
     ```
-4. Use conan to install dependencies
-    ```bash 
-    mkdir build
-    conan install . --build=missing 
+   2. Configure and build
+    ```bash
+    cmake --preset release -DBUILD_PROTO_FILES=OFF -DBUILD_TESTS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_GRAPH_ONLY=ON
+    cmake --build build --config Release
     ```
-5. Compile
+   3. Run unit tests (if BUILD_TESTS=ON)
     ```bash
     cd build
-    cmake ..
-    cmake --build . --config Release 
-    ```
-    Or use visual studio to open the mediapipelite.sln in the build folder for compilation
-6. Run unit tests
-    ```bash
     ctest -V
     ```

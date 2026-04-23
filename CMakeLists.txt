@@ -96,8 +96,8 @@ if(NOT EXISTS "${PROTOBUF_PROTOC_EXECUTABLE}")
     endif()
 endif()
 message(STATUS "Using protoc: ${PROTOBUF_PROTOC_EXECUTABLE}")
-# vcpkg provides component targets (absl::strings, etc.) while Conan provides abseil::abseil
-# Create combined target for compatibility with existing code expecting 'abseil::abseil'
+# vcpkg provides component targets (absl::strings, etc.)
+# Create combined target for code expecting 'abseil::abseil'
 if(NOT TARGET abseil::abseil)
     set(ABSEIL_COMPONENTS
         absl::strings
@@ -118,8 +118,7 @@ if(NOT TARGET abseil::abseil)
     add_library(abseil::abseil INTERFACE IMPORTED GLOBAL)
     target_link_libraries(abseil::abseil INTERFACE ${ABSEIL_COMPONENTS})
 endif()
-# vcpkg provides protobuf::libprotobuf while Conan provides protobuf::protobuf
-# Create target for compatibility (ALIAS cannot be exported, use INTERFACE IMPORTED)
+# Create target alias for protobuf::libprotobuf (ALIAS cannot be exported, use INTERFACE IMPORTED)
 if(NOT TARGET protobuf::protobuf)
     add_library(protobuf::protobuf INTERFACE IMPORTED GLOBAL)
     target_link_libraries(protobuf::protobuf INTERFACE protobuf::libprotobuf)

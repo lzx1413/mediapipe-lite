@@ -170,6 +170,6 @@ Managed via `vcpkg.json` manifest. Core dependencies:
 vcpkg uses component-based targets:
 - `absl::strings`, `absl::status`, `absl::synchronization`, etc. (not `abseil::abseil`)
 - `protobuf::libprotobuf` (not `protobuf::protobuf`)
-- `glog::glog` (same as Conan)
+- `glog::glog`
 
 The CMakeLists.txt creates aliases for compatibility with existing code that uses `abseil::abseil` and `protobuf::protobuf`.
